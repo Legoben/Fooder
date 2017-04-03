@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Welcome to Fooder!</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cosmo/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+
+    <style>
+        html, body{
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            background-color: rgba(0,0,0,0.35);
+            color: white;
+            text-align: center;
+        }
+
+        #vidhold{
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            z-index: -2;
+        }
+
+        h1{
+            font-size:102px;
+            margin-top:20px;
+            font-family: 'Lobster', cursive;
+        }
+        
+        #btnhold{
+            width:auto;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div id="vidhold">
+        <video style="height: 100%; width:100%; object-fit: fill;" autoplay loop>
+            <source src="../static/vid/hp.mp4">
+        </video>
+    </div>
+
+    <br>
+    <h1>Fooder</h1>
+    <br><br>
+    <div id="btnhold">
+        <button id="mebtn" class="btn btn-lg btn-primary" style="margin-left: 10px;">Resturants Near Me</button>
+        &nbsp;&nbsp;
+        <button id="zipbtn" class="btn btn-lg btn-primary" style="margin-right: 10px;">Resturants Near Zip Code</button>
+
+        <div class="input-group input-group-lg" style="margin-top:20px;" id="ziphold">
+            <input class="form-control input-lg input" id="zipinput" placeholder="zip code">
+            <span class="input-group-btn">
+                <button class="btn btn-success" id="gobtn"><i class="fa fa-arrow-right"></i> </button>
+            </span>
+
+        </div>
+    </div>
+
+
+    <form class="hidden" method="post" action="{{ url_for("swipe_page") }}" id="hiddenform"></form>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{{ url_for("static", filename="js/index.js") }}"></script>
+
+
+
+
+</body>
+</html>

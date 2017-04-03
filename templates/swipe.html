@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">-->
+    <title>Welcome to Fooder!</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cosmo/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+    <link href="{{ url_for("static", filename="css/sweetalert.css") }}" rel="stylesheet">
+    <link href="{{ url_for("static", filename="css/swipe.css") }}" rel="stylesheet">
+
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/" style="font-family: 'Lobster', cursive;">Fooder</a>
+        </div>
+
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" id="numremaining" onclick="return false;"></a></li>
+        </ul>
+    </div>
+</nav>
+<div id="content" class="container" style="width:90%; margin:0 auto;">
+
+    {# Prevent flask from sucking up my Vue.js elements #}
+    {% raw %}
+
+    <div id="cardhold" class="card">
+        <div class="front" style="background-color:white;">
+            <div class="col-xs-6" style="text-align: center;">
+                <img v-bind:src="image" style="max-width:100%; max-height: 350px;">
+                <h1> {{ title }} <sup><a v-bind:href="url" target="_blank">
+                    <i class="fa fa-external-link" style="font-size: 16px;"></i>
+                </a></sup></h1>
+                <i>{{ DisplayCategories }}</i><br>
+                <p><b>{{ cost }}</b> | <span>~{{ DistMiles }} mi</span></p>
+            </div>
+            <div class="col-xs-6" id="reviews">
+                <h3>Overall:
+                    <span v-for="n in 5">
+                        <i class="fa fa-star" v-if="n <= rating"></i>
+                        <i class="fa fa-star-o" v-if="n > rating"></i>
+                    </span>
+                </h3>
+                <hr/>
+                <span v-if="reviews == null">Loading ...</span>
+                <review-item v-for="review in reviews" v-bind:review="review"></review-item>
+
+            </div>
+        </div>
+
+        <div class="back" style="background-color:white;">
+            <h1>I don't want to go here because:</h1>
+            <div class="list-group">
+                <a href="#" class="list-group-item" rule="dist" v-bind:data="dist">
+                    <h4 class="list-group-item-heading">It's too far away</h4>
+                </a>
+
+                <a href="#" class="list-group-item" rule="price" v-bind:data="cost"
+                   v-if="typeof cost !== 'undefined' && cost !='$'">
+                    <h4 class="list-group-item-heading">It's too expensive</h4>
+                </a>
+
+                <a href="#" class="list-group-item" v-for="cat in categories" rule="cat" v-bind:data="cat.alias">
+                    <h4 class="list-group-item-heading">I'm not in the mood for {{ cat.title }}</h4>
+                </a>
+                <a href="#" class="list-group-item" rule="none">
+                    <h4 class="list-group-item-heading">Other reason</h4>
+                </a>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- click-yes Modal -->
+    <div class="modal fade" id="yesModal" tabindex="-1" role="dialog" aria-labelledby="yesModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="yesModalLabel">{{ phrase }}</h4>
+                </div>
+                <div class="modal-body" style="text-align: center;">
+                    <h3 style="margin-top: 5px;">{{ title }}</h3>
+                    <p>
+                    <div v-for="address in loc.display_address">{{ address }}</div>
+                    </p>
+                    <iframe id="map" frameborder="0"></iframe>
+
+
+                </div>
+                <div class="modal-footer" style="border-bottom: 1px solid #e5e5e5;">
+                    <a class="btn btn-success" id="navbtn" target="_blank" style="float: left;">Navigate</a>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Save and keep browsing</button>
+                </div>
+                <div class="modal-body" v-if="liked.length != 0">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <td>Previous</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="l in liked">
+                            <td>{{ l.name }}</td>
+                            <td><a target="_blank" class="btn btn-xs btn-success"
+                                   v-bind:href="'https://maps.google.com/?q='+l.name + l.location.display_address.join(' ')">Navigate</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endraw %}
+
+</div>
+
+<div id="btnhold" class="row" style="margin-top:40px;">
+    <div class="col-xs-6" style="text-align: center;">
+        <div class="user-btn" id="btn-no">
+            <i class="fa fa-times"></i>
+        </div>
+    </div>
+    <div class="col-xs-6" style="text-align: center;">
+        <div class="user-btn" id="btn-yes">
+            <i class="fa fa-check"></i>
+        </div>
+    </div>
+</div>
+
+
+<script>var json = {{ json|safe }};
+var maps_key = "{{ maps_key }}";</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="{{ url_for("static", filename="js/vue.min.js") }}"></script>
+
+{% raw %}
+<script type="text/x-template" id="review-template">
+    <div class="row review" style="margin-bottom: 20px;">
+        <div class="col-xs-2" style="height: 100%;">
+            <div class="review-image" v-if="review.user.image_url != null"
+                 v-bind:style="{ backgroundImage: 'url(' + review.user.image_url + ')' }"></div>
+            <div class="review-image" v-if="review.user.image_url == null"></div> <!-- default pic -->
+
+        </div>
+        <div class="col-xs-10">
+            <h3>{{ review.user.name }}
+                <small>
+                    <time v-bind:title="review.time_created">{{ TimeAgo }}</time>
+                </small>
+                |
+                <span class="stars">
+                        <span v-for="n in 5">
+                            <i class="fa fa-star" v-if="n <= review.rating"></i>
+                            <i class="fa fa-star-o" v-if="n > review.rating"></i>
+                        </span>
+
+
+                    </span>
+            </h3>
+            <p>{{ review.text }} <a v-bind:href="review.url" target="_blank">(more)</a></p>
+
+
+        </div>
+    </div>
+
+</script>
+{% endraw %}
+
+<script src="{{ url_for("static", filename="js/jquery.timeago.js") }}"></script>
+<script src="{{ url_for("static", filename="js/jquery.flip.min.js") }}"></script>
+<script src="{{ url_for("static", filename="js/sweetalert.min.js") }}"></script>
+<script src="{{ url_for("static", filename="js/swipepage.js") }}"></script>
+
+</body>
+</html>
+

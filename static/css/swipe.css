@@ -1,0 +1,50 @@
+.user-btn{
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    border: 6px solid #f1f1f1;
+    padding: 5px;
+    display: inline-block;
+    font-size:32px;
+    cursor: pointer;
+    height: 64px;
+    width:64px;
+    background-color: white;
+}
+
+
+.review-image{
+    height: 100%;
+    width:100%;
+    background-size: cover;
+    background-image: url("/static/img/dpic.png");
+    background-position: center;
+}
+
+#cardhold{
+    min-height:500px;
+}
+
+
+#btnhold{
+    position: fixed;
+    bottom: 50px;
+    width:100%;
+}
+
+#btn-no {
+    color: #fc846b;
+}
+
+#btn-yes{
+    color: #63de9b;
+}
+
+#map{
+    border:none;
+    width:100%;
+    height:300px;
+}
+
+
+* { Box-sizing: Border-box }
