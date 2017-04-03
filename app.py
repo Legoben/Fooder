@@ -10,7 +10,6 @@ def set_yelp_token():
             "client_secret": app.config['yelp_secret']}
 
     resp = requests.post("https://api.yelp.com/oauth2/token", data=data)
-    print(resp.json())
     app.config['yelp_token'] = resp.json()["access_token"]
 
 
@@ -46,7 +45,6 @@ def get_locs(params):
     offset = 1
 
     while offset * 50 < 150 and offset * 50 < data['total']:  # can fetch 1000 max
-        print("getting buisiness")
         params['offset'] = offset * 50
         resp = requests.get("https://api.yelp.com/v3/businesses/search", headers=headers, params=params)
         offset += 1
@@ -75,7 +73,6 @@ def swipe_page():
         return redirect(url_for("home_page"))
 
     locs = get_locs(params)
-    print(locs)
     return render_template("swipe.html", json=json.dumps(locs), maps_key=app.config['maps_key'])
 
 
@@ -83,9 +80,9 @@ def swipe_page():
 def get_review(review_id):
     headers = {"Authorization": "Bearer " + app.config['yelp_token']}
     resp = requests.get("https://api.yelp.com/v3/businesses/" + review_id + "/reviews", headers=headers)
-    print(resp.json())
     return jsonify(resp.json())
 
 
 if __name__ == '__main__':
+    print("starting app")
     app.run(port=os.environ.get("PORT", 5050), debug=debug)

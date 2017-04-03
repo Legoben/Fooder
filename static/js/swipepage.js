@@ -23,7 +23,6 @@ function shuffle(a) { //via http://stackoverflow.com/questions/6274339/how-can-i
 function narrowList(compare) {
     for (var i = 0; i < json.businesses.length; i++) {
         if (compare(i)) { //compare should return true if element is to be removed
-            console.log(json.businesses[i]);
             json.businesses.splice(i, 1);
             i--;
         }
@@ -114,7 +113,6 @@ function init() {
 
     $.ajax({
         url: "/getreviews/" + current.id, success: function (reviews) {
-            console.log(reviews);
 
             app = new Vue({
                 el: "#content",
@@ -220,8 +218,7 @@ $("#btn-no").click(function () {
 
 $("#btn-yes").click(function () {
     var q = current.name + " "+current.location.display_address.join(" ");
-    console.log("yes!", q);
-    var url = "https://www.google.com/maps/embed/v1/place?key="+maps_key+"&q="+q;
+    var url = "https://www.google.com/maps/embed/v1/place?key="+maps_key+"&q="+encodeURIComponent(q);
     $("#map").attr("src", url);
     $("#navbtn").attr("href", "https://maps.google.com/?q="+q);
     $("#yesModal").modal();
